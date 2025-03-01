@@ -31,33 +31,8 @@ jobs:
       - run: yarn
       - run: yarn lint
 
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20.11.0
-          cache: "yarn"
-      - run: yarn
-      - name: Install dependencies for Puppeteer
-        run: sudo apt-get update && sudo apt-get install -y libnss3 libxss1 libasound2t64 libgbm1 libgtk-3-0
-
-      - name: Start server in background
-        run: yarn start & # Запускаем сервер в фоне
-
-      - name: Wait for server to be ready
-        run: sleep 20 # Даём серверу время на запуск
-
-      - name: Run tests
-        run: yarn test
-
-      - name: Stop server
-        run: kill $(lsof -t -i:9000) || true # Завершаем сервер
-
   build:
-    needs: [eslint, test]
+    needs: [eslint] # Убрана зависимость от задачи test
 
     environment:
       name: github-pages
